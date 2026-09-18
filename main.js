@@ -80,3 +80,33 @@ if (form) {
     window.open(url, '_blank', 'noopener');
   });
 }
+
+// Auto-rotation pauses for interaction, hidden tabs and reduced-motion preferences.
+const supplierGallery = document.querySelector('.supplier-gallery');
+if (supplierGallery) {
+  const track = supplierGallery.querySelector('.supplier-track');
+  const pause = supplierGallery.querySelector('[data-supplier-pause]');
+  const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  let paused = motion.matches;
+  let hovering = false;
+  supplierGallery.querySelector('.supplier-controls').hidden = false;
+  const label = () => { pause.textContent = paused ? 'Start rotation' : 'Pause rotation'; };
+  const advance = direction => {
+    const limit = track.scrollWidth - track.clientWidth;
+    let next = track.scrollLeft + direction * (track.firstElementChild.getBoundingClientRect().width + parseFloat(getComputedStyle(track).gap));
+    if (direction > 0 && track.scrollLeft >= limit - 2) next = 0;
+    if (direction < 0 && track.scrollLeft <= 2) next = limit;
+    track.scrollTo({left: Math.max(0, Math.min(limit, next)), behavior: motion.matches ? 'instant' : 'smooth'});
+  };
+  pause.addEventListener('click', () => { paused = !paused; label(); });
+  supplierGallery.querySelector('[data-supplier-prev]').addEventListener('click', () => advance(-1));
+  supplierGallery.querySelector('[data-supplier-next]').addEventListener('click', () => advance(1));
+  supplierGallery.addEventListener('mouseenter', () => { hovering = true; });
+  supplierGallery.addEventListener('mouseleave', () => { hovering = false; });
+  track.addEventListener('touchstart', () => { paused = true; label(); }, {passive:true});
+  motion.addEventListener('change', () => { paused = motion.matches; label(); });
+  setInterval(() => {
+    if (!paused && !hovering && !document.hidden && !supplierGallery.contains(document.activeElement)) advance(1);
+  }, 3500);
+  label();
+}
