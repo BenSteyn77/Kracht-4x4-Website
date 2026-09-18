@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://krachtfitmentcentre.co.za/sitemap.xml
