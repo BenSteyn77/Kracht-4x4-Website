@@ -1,0 +1,14 @@
+# Local credentials and private exports must never be deployed.
+.env
+.env.*
+!.env.example
+!.env.sample
+*.pem
+*.key
+*.p12
+*.pfx
+*.sql
+*.bak
+.idea/
+.vscode/
+node_modules/
