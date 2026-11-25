@@ -64,6 +64,18 @@ if (dialog) {
 
 const form = document.querySelector('#quote-form');
 if (form) {
+  const serviceKey = new URLSearchParams(window.location.search).get('service');
+  const serviceSelect = form.querySelector('select[name="service"]');
+  const enquiryMessage = form.querySelector('textarea[name="message"]');
+  const matchingService = serviceSelect && serviceKey &&
+    Array.from(serviceSelect.options).find(option => option.dataset.service === serviceKey);
+  if (matchingService && !serviceSelect.value) {
+    matchingService.selected = true;
+    if (enquiryMessage && !enquiryMessage.value.trim()) {
+      enquiryMessage.value = `Could you tell me more about your ${matchingService.textContent.toLowerCase()} services?`;
+    }
+  }
+
   form.addEventListener('submit', event => {
     event.preventDefault();
     if (!form.reportValidity()) return;
